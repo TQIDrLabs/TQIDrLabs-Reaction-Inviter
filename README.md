@@ -19,7 +19,8 @@ Extension Chrome qui invite, depuis une Page Facebook que vous administrez, les 
 
 - Deux modes : **Une publication** ou **Toute la Page** (parcours automatique du fil).
 - Détection automatique, aucun calibrage.
-- Chaque lancement repart de la publication la plus récente et revérifie tout : de nouvelles réactions ont pu arriver. Les personnes déjà invitées sont ignorées.
+- Chaque lancement recontrôle les publications sans rien mémoriser : de nouvelles réactions ont pu arriver. Les personnes déjà invitées sont ignorées.
+- **Choisir la publication de départ :** en mode « Toute la Page », ouvrez d'abord la fenêtre des réactions de la publication par laquelle vous voulez commencer, puis lancez le parcours depuis la popup. L'extension referme la fenêtre, traite cette publication, puis poursuit avec les suivantes. Sans fenêtre ouverte, le parcours commence à la première publication chargée sur la page.
 - Sécurité : aucun clic n'est envoyé tant que la fenêtre n'est pas reconnue comme une vraie fenêtre de réactions ; seuls les boutons « Inviter » de cette fenêtre sont cliqués.
 - Pause, arrêt, plafond réglable, compteurs et panneau de suivi sur la page.
 
