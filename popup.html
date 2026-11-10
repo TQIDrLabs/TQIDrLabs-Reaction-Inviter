@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Invitations Facebook</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header class="appHeader">
+      <img class="logomark" src="tqidrlabs-logo.png" alt="Logo TQIDr Labs" width="48" height="48">
+      <div class="headerText"><span class="eyebrow">TQIDr Labs <span class="eyebrowDot" aria-hidden="true">·</span> Extension Chrome</span>
+        <h1>Invitations réactions</h1>
+        <p>Extension locale <span aria-hidden="true">·</span> v<span id="appVersion">…</span></p></div>
+    </header>
+    <section class="modegrid" aria-label="Modes d'utilisation">
+      <div class="mode"><strong>Une publication</strong><p>Clique sur un emoji de réaction de la publication pour ouvrir la liste des personnes ayant réagi. L’extension sélectionne automatiquement « Toutes » si nécessaire, puis parcourt la liste et envoie les invitations disponibles.</p><button id="startManual" class="secondary action">Lancer les invitations</button></div>
+      <div class="mode featured"><strong>Toute la Page</strong><p>Ouvre la Page Facebook, puis clique sur le bouton ci-dessous. L’extension repère elle-même les réactions de chaque publication (aucun calibrage), parcourt les publications une à une et envoie les invitations disponibles, jusqu’à la limite choisie ci-dessous. Chaque nouveau lancement réexamine les publications, même déjà visitées.</p><button id="startPage" class="primary action">Lancer les invitations sur la Page</button></div>
+    </section>
+    <p class="autoCloseHint">Cette fenêtre se ferme automatiquement au lancement. L’avancement se suit dans le panneau flottant sur Facebook, que tu peux déplacer et réduire.</p>
+    <div class="settingsGrid">
+    <section class="pageLimit" aria-label="Plafond pour toute la Page">
+      <label for="pageLimitRange">Limite d’invitations — Toute la Page</label>
+      <div class="limitRow">
+        <input id="pageLimitRange" type="range" min="10" max="5001" step="1" value="100" aria-label="Curseur de 10 à 5 000 invitations, dernière position : Aucune limite">
+        <input id="pageLimitNumber" type="number" min="0" max="100000" step="1" value="100" aria-label="Nombre libre d’invitations, 0 sans plafond">
+      </div>
+      <div class="rangeLabels"><span>10</span><span>5 000</span><strong>Aucune limite</strong></div>
+      <p class="limitHint">Curseur : 10 à 5 000 invitations, dernière position « Aucune limite ». Saisie libre : 0 à 100 000 ; <strong>0 = Aucune limite</strong>.</p>
+      <p id="unlimitedAdvice" class="unlimitedAdvice" role="status" hidden><strong>Conseil de prudence :</strong> sans limite, l’extension ne s’arrête pas à un nombre défini d’invitations. Nous recommandons de ne pas dépasser <strong>1 000 invitations par jour</strong> afin de réduire le risque de restrictions temporaires de Facebook. Ce seuil est indicatif, et non officiellement garanti. <strong>Tu restes libre de poursuivre</strong>, dans les limites imposées par Facebook.</p>
+      <p class="limitInfo">Au plafond, « Reprendre » ajoute le même quota et continue au même endroit, sans recalibrer (tant que l’onglet Facebook n’est pas actualisé). Chaque nouveau lancement réexamine les publications, même déjà visitées. Une prolongation conserve le parcours en cours, sans revenir au début. Sondages exclus ; pause en cas de problème.</p>
+    </section>
+    <div class="settingsSide">
+    <section class="calibration"><strong>Repère des réactions</strong>
+      <p>Les boutons de réactions sont repérés automatiquement sur chaque publication. Ferme les fenêtres Facebook ouvertes avant de lancer le parcours.</p>
+      <p id="calibState" class="hint">Calibrage non vérifié.</p>
+    </section>
+    <details class="settings advanced">
+      <summary>Réglages avancés — valeurs recommandées</summary>
+      <div class="advancedInner">
+      <label for="delay">Délai entre deux clics</label>
+      <div class="inline"><input id="delay" type="number" min="1000" max="30000" step="500" value="2500"><span>millisecondes</span></div>
+      <label for="manualLimit">Maximum — mode « Une publication »</label>
+      <div class="inline"><input id="manualLimit" type="number" min="0" max="100000" step="1" value="0"><span>0 = sans plafond propre à l'extension</span></div>
+      </div>
+    </details>
+    </div>
+    </div>
+    <section class="status" aria-live="polite">
+      <div class="statusline"><span id="state" class="state">Prêt</span><span id="counter" class="count">0 invitation confirmée visuellement</span></div>
+      <p id="detail">Ouvre la Page ou les réactions d'une publication.</p>
+      <p id="dailyAdvice" class="dailyAdvice" hidden><strong>Conseil de prudence :</strong> nous recommandons de limiter les invitations à <strong>1 000 par jour</strong> pour réduire le risque de restriction temporaire par Facebook. Ce seuil est indicatif, non officiellement garanti. <strong>Tu peux choisir de poursuivre</strong> avec « Reprendre » ; une confirmation sera demandée lorsque la reprise autorise plus de 1 000 invitations cumulées.</p>
+      <p id="unconfirmedAlert" class="unconfirmedAlert" role="status" hidden></p>
+      <div class="miniStats">
+        <div><strong id="posts">0</strong><small>Publications finies</small></div>
+        <div><strong id="securitySkipped">0</strong><small>Publications ignorées — sécurité</small></div>
+        <div><strong id="visibleUnrecognized">0</strong><small>Indices visibles, réactions non reconnues</small></div>
+        <div><strong id="noReactionEvidence">0</strong><small>Réactions non détectées</small></div>
+        <div><strong id="opens">0</strong><small>Fenêtres de réactions ouvertes</small></div>
+        <div><strong id="failures">0</strong><small>Publications non ouvertes, à revoir</small></div>
+      </div>
+      <p class="hint">La détection des indices visibles est indicative : elle ne garantit pas qu'un compteur soit exploitable. « Non détectées » ne signifie pas « sans réactions ».</p>
+      <button id="copyDiagnostics" class="reset" type="button" disabled>Copier le diagnostic de la session</button>
+      <p id="diagnosticsCopied" class="hint" role="status" hidden></p>
+    </section>
+    <div class="actions"><button id="pause" class="secondary" disabled>Pause</button><button id="stop" class="danger" disabled>Arrêter</button></div>
+    <p class="footnote">Le bouton « Lancer les invitations sur la Page » repère automatiquement les réactions de chaque publication, sans calibrage. Chaque session réexamine les publications, y compris celles déjà traitées auparavant : de nouvelles réactions peuvent avoir été ajoutées. Le mode « Toute la Page » ne clique que sur le bouton « Inviter » d'une fenêtre de réactions reconnue. Les invitations réellement envoyées et les limites sont décidées par Facebook. La détection des publications dépend de son interface ; aucune visite de profil.</p>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>
