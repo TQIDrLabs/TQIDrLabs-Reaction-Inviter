@@ -2,60 +2,60 @@
 
 # TQIDr Labs Reaction Inviter
 
-Extension Chrome qui invite, depuis une Page Facebook que vous administrez, les personnes ayant réagi à vos publications à aimer la Page. Elle parcourt les publications, ouvre la fenêtre des réactions et clique sur « Inviter » pour chaque personne pas encore invitée.
+**English** | [Français](README.fr.md) | [Español](README.es.md)
 
-*English: a Chrome extension that goes through your Facebook Page's posts and clicks "Invite" for each person who reacted. The interface is available in French, English and Spanish (flag switch in the popup); it works with Facebook set to French, English or Spanish.*
+Chrome extension that invites, from a Facebook Page you manage, the people who reacted to your posts to like the Page. It goes through your posts, opens the reactions window and clicks "Invite" for each person not yet invited.
 
 <p align="center">
-  <img src="panneau.png" width="420" alt="Fenêtre de configuration de l'extension" valign="top">
-  <img src="popup.png" width="300" alt="Encadré de suivi affiché en bas à droite de Facebook" valign="top">
+  <img src="panneau-en.png" width="420" alt="The extension's settings window" valign="top">
+  <img src="popup-en.png" width="300" alt="Progress box shown at the bottom right of Facebook" valign="top">
 </p>
 
-> **Projet indépendant.** Cette extension n'est ni affiliée, ni approuvée, ni parrainée par Meta ou Facebook. « Facebook » est une marque de Meta Platforms, Inc., citée ici uniquement pour décrire la fonction.
+> **Independent project.** This extension is not affiliated with, endorsed by or sponsored by Meta or Facebook. "Facebook" is a trademark of Meta Platforms, Inc., used here only to describe what the extension does.
 
-## Avertissement important
+## Important warning
 
-- Facebook peut limiter ou suspendre un compte qui envoie beaucoup d'invitations, et ses conditions d'utilisation encadrent les automatisations. **Vous l'utilisez à vos risques**, avec modération. L'auteur n'est pas responsable des conséquences.
-- Objectif raisonnable : **100 invitations par jour** (plafond par défaut). Les jours de forte activité, 100 couvre déjà beaucoup de monde ; les jours calmes, l'extension remonte vers les publications plus anciennes.
-- Arrêtez-vous au moindre message de restriction de Facebook.
-- L'extension ne cherche pas à imiter un comportement humain ni à échapper à des détections : elle agit sur la page affichée, visiblement, avec un délai réglable.
+- Facebook may limit or suspend an account that sends many invitations, and its terms of use restrict automation. **You use this extension at your own risk**, and with moderation. The author is not responsible for the consequences.
+- Reasonable goal: **100 invitations per day** (default limit). On busy days 100 already covers a lot of people; on quiet days the extension goes back to older posts.
+- Stop at the first restriction message from Facebook.
+- The extension does not try to imitate human behavior or to evade detection: it acts on the page you see, visibly, with an adjustable delay.
 
-## Fonctionnement
+## How it works
 
-- Deux modes : **Une publication** ou **Toute la Page** (parcours automatique du fil).
-- Interface en **français, anglais et espagnol** : drapeaux en haut de la popup (par défaut, la langue de Chrome).
-- Détection automatique, aucun calibrage.
-- Chaque lancement recontrôle les publications sans rien mémoriser : de nouvelles réactions ont pu arriver. Les personnes déjà invitées sont ignorées.
-- **Choisir la publication de départ :** en mode « Toute la Page », ouvrez d'abord la fenêtre des réactions de la publication par laquelle vous voulez commencer, puis lancez le parcours depuis la popup. L'extension referme la fenêtre, traite cette publication, puis poursuit avec les suivantes. Sans fenêtre ouverte, le parcours commence à la première publication chargée sur la page.
-- Sécurité : aucun clic n'est envoyé tant que la fenêtre n'est pas reconnue comme une vraie fenêtre de réactions ; seuls les boutons « Inviter » de cette fenêtre sont cliqués.
-- Pause, arrêt, plafond réglable, compteurs et panneau de suivi sur la page.
+- Two modes: **One post** or **Whole Page** (automatic run through the feed).
+- Interface in **English, French and Spanish**: flags at the top of the popup (by default, Chrome's language).
+- Automatic detection, no calibration.
+- Each run re-checks the posts without remembering anything: new reactions may have arrived. People already invited are skipped.
+- **Choosing the starting post:** in "Whole Page" mode, first open the reactions window of the post you want to start from, then start the run from the popup. The extension closes the window, processes that post, then continues with the following ones. With no window open, the run starts at the first post loaded on the page.
+- Safety: no click is sent until the window is recognized as a genuine reactions window; only the "Invite" buttons of that window are clicked.
+- Pause, stop, adjustable limit, counters and a progress panel on the page.
 
-## Installation (mode développeur)
+## Installation (developer mode)
 
-1. Téléchargez le zip de la dernière version dans l'onglet **Releases** (colonne de droite) et décompressez-le.
-2. Ouvrez `chrome://extensions`, activez le **mode développeur**.
-3. **Charger l'extension non empaquetée**, puis choisissez le dossier qui contient `manifest.json`.
-4. Ouvrez votre Page Facebook (Facebook en français, en anglais ou en espagnol), cliquez sur l'icône de l'extension, lancez.
+1. Download the zip of the latest version from the **Releases** tab (right-hand column) and unzip it.
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Click **Load unpacked**, then choose the folder that contains `manifest.json`.
+4. Open your Facebook Page (with Facebook set to English, French or Spanish), click the extension icon, start.
 
-Si vous aviez une ancienne version installée, désactivez-la d'abord pour éviter deux instances.
+If an older version is installed, disable it first to avoid two instances.
 
-## Confidentialité
+## Privacy
 
-Aucune donnée n'est envoyée sur Internet, aucune publication ni aucun nom n'est mémorisé. Seuls des réglages locaux (délai, plafond, langue choisie) sont conservés dans Chrome.
+No data is sent over the Internet, and no post or name is stored. Only local settings (delay, limit, chosen language) are kept in Chrome.
 
-## Support et diagnostic
+## Support and diagnostics
 
-En cas de problème, ouvrez la popup, cliquez sur **« Copier le diagnostic de la session »** (disponible même sans erreur) et collez le résultat dans une *issue*. Le rapport contient des compteurs, des informations techniques (version de Chrome, langue, taille de fenêtre) et des structures de page anonymisées, sans noms, profils ni textes de publications. Relisez-le avant de le publier.
+If something goes wrong, open the popup, click **"Copy the session diagnostic"** (available even without an error) and paste the result into an *issue*. The report contains counters, technical information (Chrome version, language, window size) and anonymized page structures, with no names, profiles or post texts. Review it before posting.
 
-## Limites connues
+## Known limitations
 
-- Testée en conditions réelles sur Facebook en **français**, en **anglais** et en **espagnol**. Les autres langues de Facebook ne sont pas prises en charge pour l'instant (la détection s'appuie sur des libellés précis). Facebook modifie souvent sa page : une mise à jour peut casser la détection (le diagnostic aide à corriger).
-- Fenêtre à catégorie unique sans onglets : prévue mais peu vérifiée en conditions réelles.
+- Tested on real Facebook in **English**, **French** and **Spanish**. Other Facebook languages are not supported for now (detection relies on specific labels). Facebook changes its pages often: an update may break detection (the diagnostic helps fix it).
+- Single-category window with no tabs: planned for, but little checked in real conditions.
 
-## Historique
+## History
 
-[CHANGELOG.md](CHANGELOG.md)
+[CHANGELOG.md](CHANGELOG.md) (in French)
 
-## Licence
+## License
 
-[MIT](LICENSE) — © 2026 TQIDr Labs. Le logo et le nom TQIDr Labs restent la propriété de leur auteur.
+[MIT](LICENSE) — © 2026 TQIDr Labs. The TQIDr Labs logo and name remain the property of their author.
