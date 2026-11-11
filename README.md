@@ -46,9 +46,9 @@ En cas de problème, ouvrez la popup, cliquez sur **« Copier le diagnostic de l
 - Testée sur l'interface française de Facebook ; Facebook modifie souvent sa page, une mise à jour peut casser la détection (le diagnostic aide à corriger).
 - Fenêtre à catégorie unique sans onglets et libellés anglais : prévus mais peu vérifiés en conditions réelles.
 
-## Historique et documentation
+## Historique
 
-[CHANGELOG.md](CHANGELOG.md) · [notice détaillée](docs/NOTICE-detaillee.txt) · [notes de développement](docs/NOTES_DE_DEVELOPPEMENT.md)
+[CHANGELOG.md](CHANGELOG.md)
 
 ## Licence
 
