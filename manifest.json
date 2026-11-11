@@ -1,16 +1,16 @@
 {
   "manifest_version": 3,
   "name": "TQIDr Labs Reaction Inviter",
-  "short_name": "Inviter réactions",
+  "short_name": "TQIDr Inviter",
   "version": "2.25.0",
-  "description": "Invitations Facebook : parcours de Page, compteur de diagnostics des réactions non reconnues et des publications écartées par sécurité.",
+  "description": "Invite les personnes qui ont réagi aux publications de votre Page Facebook. Projet indépendant, non affilié à Meta.",
   "permissions": [
     "activeTab",
     "scripting",
     "storage"
   ],
   "action": {
-    "default_title": "Invitations des réactions",
+    "default_title": "TQIDr Labs Reaction Inviter",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icon16.png",

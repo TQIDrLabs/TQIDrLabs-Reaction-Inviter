@@ -7,8 +7,8 @@ let lastStatus = {phase:'idle', attempts:0, confirmed:0, posts:0, skipped:0, ina
 const phases = {idle:'Prêt', calibrating:'Calibrage', running:'En cours', paused:'En pause', done:'Terminé', stopped:'Arrêté', error:'Erreur'};
 const isFacebook = url => /^https:\/\/(www\.|web\.|business\.|m\.)?facebook\.com\//i.test(url || '');
 const SLIDER_UNLIMITED = 5001;
-const CAUTION_THRESHOLD = 1000;
-const DAILY_WARNING = 'Conseil de prudence : nous recommandons de limiter les invitations à 1 000 par jour pour réduire le risque de restriction temporaire par Facebook. Ce seuil est indicatif et non officiellement garanti.';
+const CAUTION_THRESHOLD = 100;
+const DAILY_WARNING = 'Conseil de prudence : nous recommandons de limiter les invitations à 100 par jour pour réduire le risque de restriction temporaire par Facebook. Ce seuil est indicatif et non officiellement garanti.';
 function showUnlimitedWarning() {
   $('unlimitedAdvice').hidden = $('pageLimitNumber').value !== '0';
 }

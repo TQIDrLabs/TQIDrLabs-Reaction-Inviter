@@ -538,7 +538,7 @@
             <div class="progressRow"><span>Plafond d’invitations</span><span id="progressText"></span></div>
             <div class="bar" id="bar" role="progressbar" aria-label="Progression vers le plafond d’invitations" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="barFill"></span></div>
           </div>
-          <p id="dailyAdvice" class="dailyAdvice" hidden><strong>Conseil de prudence :</strong> limite de préférence les invitations à <strong>1 000 par jour</strong> pour réduire le risque de restriction temporaire par Facebook. Ce seuil n'est pas officiellement garanti. <strong>Tu peux choisir de poursuivre</strong> avec « Reprendre » : une confirmation sera demandée avant prolongation.</p>
+          <p id="dailyAdvice" class="dailyAdvice" hidden><strong>Conseil de prudence :</strong> limite de préférence les invitations à <strong>100 par jour</strong> pour réduire le risque de restriction temporaire par Facebook. Ce seuil n'est pas officiellement garanti. <strong>Tu peux choisir de poursuivre</strong> avec « Reprendre » : une confirmation sera demandée avant prolongation.</p>
         </div>
         <div class="controls"><button id="pause" type="button">Pause</button>
         <button id="stop" type="button">Arrêter</button></div>
@@ -551,7 +551,7 @@
     pauseButton.addEventListener('click', () => {
       if (state.phase === 'done' && state.limitReached) {
         const nextLimit = state.limit + state.batchLimit;
-        if (nextLimit <= 1000 || window.confirm(`Conseil de prudence : nous recommandons de limiter les invitations à 1 000 par jour pour réduire le risque de restriction temporaire par Facebook. Ce seuil est indicatif, non officiellement garanti.\n\nCette reprise porterait le plafond cumulé à ${nextLimit.toLocaleString('fr-FR')} invitations. Tu restes libre de poursuivre. Souhaites-tu continuer sans remonter la Page ?`)) continueAfterLimit();
+        if (nextLimit <= 100 || window.confirm(`Conseil de prudence : nous recommandons de limiter les invitations à 100 par jour pour réduire le risque de restriction temporaire par Facebook. Ce seuil est indicatif, non officiellement garanti.\n\nCette reprise porterait le plafond cumulé à ${nextLimit.toLocaleString('fr-FR')} invitations. Tu restes libre de poursuivre. Souhaites-tu continuer sans remonter la Page ?`)) continueAfterLimit();
       } else if (state.phase === 'paused') resume();
       else pause();
     });
@@ -623,7 +623,7 @@
     stats.textContent = detailText; stats.hidden = !detailText;
     const active = state.phase === 'running' || state.phase === 'paused';
     const canContinue = state.phase === 'done' && state.mode === 'page' && state.limitReached && state.batchLimit > 0;
-    $('dailyAdvice').hidden = !(canContinue && state.limit + state.batchLimit > 1000);
+    $('dailyAdvice').hidden = !(canContinue && state.limit + state.batchLimit > 100);
     pauseButton.disabled = !active && !canContinue;
     pauseButton.textContent = canContinue ? `Reprendre (+${state.batchLimit.toLocaleString('fr-FR')})` : state.phase === 'paused' ? 'Reprendre' : 'Pause';
     stopButton.disabled = !(active || state.phase === 'calibrating');
