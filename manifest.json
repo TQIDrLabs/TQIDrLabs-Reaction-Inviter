@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TQIDr Labs Reaction Inviter",
   "short_name": "TQIDr Inviter",
-  "version": "2.25.0",
+  "version": "2.27.0",
   "description": "Invite les personnes qui ont réagi aux publications de votre Page Facebook. Projet indépendant, non affilié à Meta.",
   "permissions": [
     "activeTab",
@@ -31,6 +31,7 @@
         "https://m.facebook.com/*"
       ],
       "js": [
+        "i18n.js",
         "content.js"
       ],
       "run_at": "document_idle"

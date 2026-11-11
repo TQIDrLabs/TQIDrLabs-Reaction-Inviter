@@ -113,3 +113,10 @@ button:hover:not(:disabled){border-color:#6db6a8}
 .footnote{font-size:10.5px;line-height:1.55;color:#607579;margin:12px 0 0}
 [hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){button{transition:none}}
+
+.langSwitch{margin-left:auto;display:flex;gap:6px;align-self:flex-start}
+.langSwitch button{padding:2px;width:32px;height:24px;line-height:0;border-radius:6px;background:transparent;border:2px solid transparent;opacity:.6;cursor:pointer}
+.langSwitch button svg{width:100%;height:100%;display:block;border-radius:3px;box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+.langSwitch button:hover{opacity:.9}
+.langSwitch button[aria-pressed="true"]{opacity:1;border-color:#18a999}
+.langSwitch button:focus-visible{outline:2px solid #9edbd0;outline-offset:1px}

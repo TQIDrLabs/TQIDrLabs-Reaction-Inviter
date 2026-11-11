@@ -1,5 +1,5 @@
 /*
- * Invitations des réactions Facebook — V2.25.0 (habillage graphique, fiabilité des délais, popup large, panneau amélioré).
+ * Invitations des réactions Facebook — V2.27.0 (interface FR/EN/ES, détection espagnole).
  * Actions strictement locales dans l'onglet explicitement activé.
  * Aucune requête réseau, aucun profil ouvert, aucun contournement des limites Meta.
  * Le mode "Page entière" dépend de la structure HTML visible de Facebook.
@@ -28,6 +28,8 @@
   let nextTemporaryHandle = 0;
   let pendingRunId = 0;
   let overlay, line, stats, pauseButton, stopButton;
+  // Langue de l'interface (FR/EN) : réglée depuis la popup, appliquée à l'affichage seulement.
+  try { window.TQ_I18N?.load().then(() => { try { renderOverlay(); } catch { /* panneau pas encore créé */ } }); window.TQ_I18N?.onChange(() => { try { renderOverlay(); } catch { /* idem */ } }); } catch { /* sans effet */ }
   // Fenêtre ouverte par le clic de réaction, parfois sans l'onglet « Toutes ».
   let lastReactionDialog = null;
   // Une fenêtre confirmée reste reconnue durant le défilement, même si React
@@ -63,7 +65,7 @@
 
   // 2.24.9.6 : instantané ANONYMISÉ d'une publication problématique, joint au diagnostic de session.
   // Aucun nom ni texte libre : seuls des mots d'interface connus et des nombres sont conservés, le reste devient « X ».
-  const SNAP_WORDS = new Set(('voir qui a ont réagi réagit à cette ce publication publications personne personnes autre autres et aime j’aime j\'aime adore j’adore solidaire haha wouah wow triste grr réaction réactions commentaire commentaires partage partages partager commenter envoyer fois vues vue toutes tous afficher masquer plus moins avec sur en pour par dans suivre inviter fermer menu actions options like love care angry sad laugh comment share comments shares people person other others and see who reacted this post all show more').split(/\s+/));
+  const SNAP_WORDS = new Set(('mostrar personas que han reaccionado con todo me divierte gusta asombra encanta importa entristece enfada consulta quién ha reaccionado esto cerrar siguiendo invitar invitado(a) comentar compartir comentarios ver más veces compartido responder voir qui a ont réagi réagit à cette ce publication publications personne personnes autre autres et aime j’aime j\'aime adore j’adore solidaire haha wouah wow triste grr réaction réactions commentaire commentaires partage partages partager commenter envoyer fois vues vue toutes tous afficher masquer plus moins avec sur en pour par dans suivre inviter fermer menu actions options like love care angry sad laugh comment share comments shares people person other others and see who reacted this post all show more').split(/\s+/));
   const snapShape = v => {
     if (v==null) return null;
     const t=String(v).replace(/[\u200b-\u200f\u2060]/g,'').replace(/\s+/g,' ').trim();
@@ -187,18 +189,18 @@
   function isActionable(el) {
     return !!el && el.getAttribute('aria-disabled') !== 'true' && !el.disabled && !el.closest('[data-fb-reactions-tool]');
   }
-  const invite = el => /^(inviter|invite)$/i.test(btnText(el)) && isActionable(el);
+  const invite = el => /^(inviter|invite|invitar)$/i.test(btnText(el)) && isActionable(el);
   // Facebook affiche couramment « Invité(e) » avec parenthèses pour les
   // invitations déjà envoyées. Sans cette forme, une liste entièrement invitée
   // cesse d'être reconnue comme liste de réactions alors qu'elle est ouverte.
-  const isReactionProfileStatus = value => /^(?:inviter|invite|invité(?:e|\(e\))?|déjà\s+invité(?:e|\(e\))?|suivi(?:e|\(e\))?|suivre|following|followed|already invited|invited)$/i.test(clean(value));
+  const isReactionProfileStatus = value => /^(?:inviter|invite|invitar|invité(?:e|\(e\))?|déjà\s+invité(?:e|\(e\))?|invitad[oa](?:\(a\))?|ya\s+invitad[oa](?:\(a\))?|suivi(?:e|\(e\))?|suivre|following|followed|siguiendo|seguir|seguid[oa](?:\(a\))?|already invited|invited)$/i.test(clean(value));
   const inviteButtons = root => root ? Array.from(root.querySelectorAll('button,[role="button"]')).filter(el => inViewport(el) && invite(el)) : [];
 
   function allTab(root) {
     if (!root) return null;
     const matches = Array.from(root.querySelectorAll('[role="tab"],button,[role="button"],[tabindex="0"],a,span,div'))
-      .filter(el => inViewport(el) && /^(toutes|all)$/i.test(btnText(el)) &&
-        !Array.from(el.children).some(child => /^(toutes|all)$/i.test(btnText(child))));
+      .filter(el => inViewport(el) && /^(toutes|all|todo|todas|todos)$/i.test(btnText(el)) &&
+        !Array.from(el.children).some(child => /^(toutes|all|todo|todas|todos)$/i.test(btnText(child))));
     for (const el of matches) {
       const actionable = el.closest('[role="tab"],button,[role="button"],[tabindex="0"],a');
       if (actionable && root.contains(actionable)) {
@@ -214,7 +216,7 @@
   function closeButton(root) {
     return root ? Array.from(root.querySelectorAll('button,[role="button"]')).find(el =>
       inViewport(el) && isActionable(el) && !el.closest('a[href]') &&
-      /^(?:fermer|close|dismiss|quitter)$/i.test(clean(el.getAttribute('aria-label') || el.getAttribute('title') || btnText(el)))) : null;
+      /^(?:fermer|close|dismiss|quitter|cerrar)$/i.test(clean(el.getAttribute('aria-label') || el.getAttribute('title') || btnText(el)))) : null;
   }
   // Une ancienne modale peut rester dans le DOM pendant l'animation de
   // fermeture. inViewport() seul ne suffit pas à dire qu'elle est à l'écran.
@@ -251,12 +253,12 @@
   // Signature FORTE (vue sur la vraie fenêtre Facebook) : onglets role=tab dont l'aria-label
   // annonce « Afficher les N personnes qui ont réagi avec X ». Une fenêtre « Inviter des amis »
   // ou autre n'en a jamais.
-  const REACTION_TAB_LABEL = /(?:afficher|voir|see|show)\s+(?:les\s+|all\s+)?\d[\d\s.,]*\s*(?:personnes?|people|person)\b.*(?:réagi|reacted)/i;
+  const REACTION_TAB_LABEL = /(?:afficher|voir|see|show|mostrar|ver)\s+(?:les\s+|all\s+|a\s+|las\s+)?\d[\d\s.,]*\s*(?:personnes?|people|person|personas?)\b.*(?:réagi|reacted|reaccionado|reaccion)/i;
   function strongReactionTabs(root) {
     return Array.from(root.querySelectorAll('[role="tab"]')).filter(el => REACTION_TAB_LABEL.test(el.getAttribute('aria-label') || ''));
   }
   function announcedReactionTotal(root) {
-    const t = strongReactionTabs(root).find(el => /(?:avec|with)\s+(?:toutes|all)\s*$/i.test(el.getAttribute('aria-label') || '')) || strongReactionTabs(root)[0];
+    const t = strongReactionTabs(root).find(el => /(?:avec|with|con)\s+(?:toutes|all|todo|todas|todos)\s*$/i.test(el.getAttribute('aria-label') || '')) || strongReactionTabs(root)[0];
     const m = t && /(\d[\d\s.,]*)/.exec(t.getAttribute('aria-label') || '');
     if (!m) return null;
     const n = parseInt(m[1].replace(/\D/g, ''), 10);
@@ -328,7 +330,7 @@
       });
     const numberNodes=Array.from(root.querySelectorAll('span,div,button,[role="tab"]'))
       .filter(el => head(el) && /^\d+(?:[\s.,]\d+)*\s*[kKmM]?$/.test(clean(el.innerText||'')));
-    const categoryTabs=headerTabs.filter(tab => tab !== all && !/^(toutes|all)$/i.test(btnText(tab)));
+    const categoryTabs=headerTabs.filter(tab => tab !== all && !/^(toutes|all|todo|todas|todos)$/i.test(btnText(tab)));
     const namedCategory=categoryTabs.some(tab => {
       const label=normalizedReactionLabel(btnText(tab));
       return /^(?:j'aime|j'adore|haha|wouah|grr+|triste|solidaire|like|love|angry|sad|wow|care|laugh)(?:\s+\d+[\d\s.,kKmM]*)?$/.test(label) ||
@@ -431,7 +433,7 @@
       Math.min(el.scrollHeight - el.clientHeight,10000) + (rect(el).width < 850 ? 1000 : 0)}))
       .sort((a,b) => b.score - a.score)[0]?.el || null;
   }
-  const restriction = str => /(?:trop d['’]invitations|limite d['’]invitations|réessayez plus tard|vous avez atteint (?:la|votre) limite|too many invites|too many invitations|try again later|temporarily blocked|action (?:bloquée|blocked)|vous ne pouvez pas (?:envoyer|inviter))/i.test(clean(str));
+  const restriction = str => /(?:trop d['’]invitations|limite d['’]invitations|réessayez plus tard|vous avez atteint (?:la|votre) limite|too many invites|too many invitations|try again later|temporarily blocked|action (?:bloquée|blocked)|vous ne pouvez pas (?:envoyer|inviter)|demasiadas invitaciones|l[ií]mite de invitaciones|int[eé]ntalo de nuevo m[aá]s tarde|bloquead[oa] temporalmente|acci[oó]n bloqueada|no puedes (?:enviar|invitar)|has alcanzado (?:el|tu) l[ií]mite)/i.test(clean(str));
   function blockedByFacebook(root) {
     if (restriction((root?.innerText || '').slice(0, 25000))) return true;
     return Array.from(document.querySelectorAll('[role="alert"],[aria-live="assertive"],[role="alertdialog"]'))
@@ -551,7 +553,7 @@
     pauseButton.addEventListener('click', () => {
       if (state.phase === 'done' && state.limitReached) {
         const nextLimit = state.limit + state.batchLimit;
-        if (nextLimit <= 100 || window.confirm(`Conseil de prudence : nous recommandons de limiter les invitations à 100 par jour pour réduire le risque de restriction temporaire par Facebook. Ce seuil est indicatif, non officiellement garanti.\n\nCette reprise porterait le plafond cumulé à ${nextLimit.toLocaleString('fr-FR')} invitations. Tu restes libre de poursuivre. Souhaites-tu continuer sans remonter la Page ?`)) continueAfterLimit();
+        if (nextLimit <= 100 || window.confirm(window.TQ_I18N.tr(`Conseil de prudence : nous recommandons de limiter les invitations à 100 par jour pour réduire le risque de restriction temporaire par Facebook. Ce seuil est indicatif, non officiellement garanti.\n\nCette reprise porterait le plafond cumulé à ${nextLimit.toLocaleString('fr-FR')} invitations. Tu restes libre de poursuivre. Souhaites-tu continuer sans remonter la Page ?`))) continueAfterLimit();
       } else if (state.phase === 'paused') resume();
       else pause();
     });
@@ -563,6 +565,7 @@
       foldButton.textContent = collapsed ? '+' : '–';
       foldButton.setAttribute('aria-expanded', String(!collapsed));
       foldButton.setAttribute('aria-label', collapsed ? 'Agrandir le panneau' : 'Réduire le panneau');
+      try { window.TQ_I18N?.translateTree(shadow); } catch { /* traduction facultative */ }
     });
     const grip = shadow.getElementById('grip');
     let drag = null;
@@ -627,6 +630,7 @@
     pauseButton.disabled = !active && !canContinue;
     pauseButton.textContent = canContinue ? `Reprendre (+${state.batchLimit.toLocaleString('fr-FR')})` : state.phase === 'paused' ? 'Reprendre' : 'Pause';
     stopButton.disabled = !(active || state.phase === 'calibrating');
+    try { window.TQ_I18N?.translateTree(panel); } catch { /* traduction facultative */ }
   }
   function update(phase, detail) { state.phase = phase; state.detail = detail; renderOverlay(); }
   function pause() {
@@ -793,8 +797,25 @@
         update('running', `Fin de liste apparente : ${seenCount} personne(s) vue(s) sur ${total} annoncée(s), attente de Facebook…`);
       }
       if (!scroller.isConnected) {
-        root = reactionDialog(); scroller = findScrollable(root);
-        if (!scroller) throw new Error('Zone de défilement des réactions perdue.');
+        // 2.26.0 : la zone de défilement a été remplacée par Facebook. On attend quelques secondes qu'elle
+        // réapparaisse AVANT de mettre en pause, et on journalise ce qui est vu (anonyme) pour comprendre le cas.
+        let found = null, again = null;
+        for (let k=0; k<8 && !found; k++) {
+          if (!(await wait(id,500))) return 'cancelled';
+          again = reactionDialog(); found = again ? findScrollable(again) : null;
+        }
+        const total = again ? announcedReactionTotal(again) : null;
+        let zones = [];
+        try {
+          zones = again ? [again,...again.querySelectorAll('*')].filter(el => /auto|scroll/.test(getComputedStyle(el).overflowY)).slice(0,6)
+            .map(el => ({h:el.clientHeight, sh:el.scrollHeight, visible:inViewport(el)})) : [];
+        } catch { zones = []; }
+        logDiagnosis('scroll_lost', state.current || '', 'zone_defilement_deconnectee',
+          found ? 'retrouvee_apres_attente' : (again ? 'fenetre_presente_sans_zone_defilable' : 'fenetre_absente'),
+          {personnes_vues:seenCount, annoncees:total, defilements_liste:state.scrolls, inactifs:idleScrolls, zones_defilantes:zones});
+        if (found) { root = again; scroller = found; }
+        else if (again && !(total != null && seenCount < total)) { root = again; scroller = again; }   // liste entièrement visible : la boucle conclut
+        else throw new Error('Zone de défilement des réactions perdue.');
       }
     }
     return 'cancelled';
@@ -869,15 +890,15 @@
     if (!post || !post.isConnected) return false;
     const text=normalizedReactionLabel(clean(post.innerText||'').slice(0,18000));
     // Intitulés explicites, même si les résultats sont présentés en lecture seule.
-    if (/(?:\bsondage\b|\bpoll\b|ajouter une option|supprimer l['’]option|supprimer cette option|option du sondage|poll option|delete poll|poll results?|resultats? du sondage)/i.test(text)) return true;
+    if (/(?:\bsondage\b|\bpoll\b|\bencuesta\b|ajouter une option|a[ñn]adir una opci[oó]n|supprimer l['’]option|supprimer cette option|eliminar (?:la|esta) opci[oó]n|option du sondage|poll option|delete poll|poll results?|resultats? du sondage|resultados de la encuesta)/i.test(text)) return true;
     const removeControl=Array.from(post.querySelectorAll('button,[role="button"],[aria-label],[title]')).some(el=>
-      /(?:supprimer|delete|remove|retirer|effacer).{0,32}(?:option|choix|sondage|poll)|(?:option|choix|poll).{0,32}(?:supprimer|delete|remove)/i.test(clean([
+      /(?:supprimer|delete|remove|retirer|effacer|eliminar|borrar|quitar).{0,32}(?:option|choix|sondage|poll|opci[oó]n|encuesta)|(?:option|choix|poll|opci[oó]n).{0,32}(?:supprimer|delete|remove|eliminar|borrar)/i.test(clean([
         el.getAttribute('aria-label'),el.getAttribute('title'),el.innerText?.slice(0,90)
       ].filter(Boolean).join(' '))));
     if (removeControl) return true;
     const voteWidgets=post.querySelector('[role="checkbox"],input[type="checkbox"],[role="radio"],input[type="radio"],[role="progressbar"]');
     const percentages=(text.match(/(?:^|\s)\d{1,3}(?:[.,]\d+)?\s*%/g)||[]).length;
-    return !!voteWidgets && (percentages>=1 || /(?:voter|votez|votes?\b|choisir une reponse|choose an answer)/i.test(text));
+    return !!voteWidgets && (percentages>=1 || /(?:voter|votez|votes?\b|votar|votos?\b|choisir une reponse|choose an answer|elige una respuesta)/i.test(text));
   }
   function isUnsafeTarget(node) {
     if (!node || !node.closest) return true;
@@ -889,7 +910,7 @@
       action.getAttribute('aria-label'), action.getAttribute('title'),
       (action.innerText||'').slice(0,110)
     ].filter(Boolean).join(' ')));
-    return /(?:supprimer|delete|remove|retirer|effacer|modifier|edit|ajouter une option|add poll option|voter|vote now)/i.test(descriptor);
+    return /(?:supprimer|delete|remove|retirer|effacer|modifier|edit|ajouter une option|add poll option|voter|vote now|eliminar|borrar|editar|a[ñn]adir una opci[oó]n|votar)/i.test(descriptor);
   }
   function postIsPinned(post) {
     // Ne lire que les premiers mots : un post parlant d'un contenu "épinglé" n'est pas nécessairement épinglé.
@@ -902,7 +923,7 @@
     if (node.querySelector('a[href*="/posts/"],a[href*="story_fbid="],a[href*="story.php"],a[href*="permalink.php"]')) score+=3;
     if (node.querySelector('div[data-ad-preview="message"],div[data-ad-comet-preview="message"],time,abbr[data-utime]')) score+=2;
     const txt=clean(node.innerText||'');
-    if (/(?:commenter|comment|partager|share)/i.test(txt) && /(?:j’aime|j'aime|like)/i.test(txt)) score+=2;
+    if (/(?:commenter|comment|partager|share|comentar|compartir)/i.test(txt) && /(?:j’aime|j'aime|like|me gusta)/i.test(txt)) score+=2;
     if (node.querySelector('img[alt],svg,[role="img"]')) score++;
     return score;
   }
@@ -987,7 +1008,7 @@
    * aussi un indice de réactions ou un libellé explicite. On refuse tous
    * les liens <a href> afin de ne jamais ouvrir un profil ou un permalink.
    */
-  const reactionWords = /(?:réactions?|reactions?|personnes? (?:qui |ayant )?ont réagi|people (?:who )?reacted|ont aimé|likes? on this post|view reactions?|voir les réactions)/i;
+  const reactionWords = /(?:réactions?|reactions?|reacciones|personnes? (?:qui |ayant )?ont réagi|people (?:who )?reacted|personas? que (?:han )?reaccionado|ont aimé|likes? on this post|view reactions?|voir les réactions|ver reacciones)/i;
   const reactionIcons = /(?:j’aime|j'adore|love|like|haha|wow|care|sad|angry|solidaire|triste|grr|reaction|réaction)/i;
   const bareNumber = /^(?:\d{1,3}(?:[\s\u00a0.,]\d{3})+|\d+)(?:[.,]\d+)?\s*[kKmM]?$/;
   function hasReactionIcon(el) {
@@ -1039,7 +1060,7 @@
     const r=rect(el);
     if (!r || r.width < 8 || r.height < 8 || r.width > 760 || r.height > 110) return false;
     const aria=clean([el.getAttribute('aria-label'),el.getAttribute('title')].filter(Boolean).join(' '));
-    if (/(?:commentaires?|comments?|partages?|shares?|répondre|reply|publications? similaire|nombre de vues|views?)/i.test(aria)) return false;
+    if (/(?:commentaires?|comments?|comentarios?|partages?|shares?|compartid[oa]s?|veces compartido|répondre|reply|responder|publications? similaire|nombre de vues|views?|visualizaciones)/i.test(aria)) return false;
     return true;
   }
   // L'interface observée a DEUX niveaux : clic sur une des pastilles
@@ -1065,7 +1086,7 @@
     // Exemple : [logo Haha] [logo J’adore] 31 K [20 commentaires].
     return /^(?:[\s\u00a0]*\d[\d\s\u00a0.,]*\s*[kKmM]?\b)/.test(text) ||
       /(?:^|\s)\d[\d\s\u00a0.,]*\s*[kKmM]?(?:\s|$)/.test(text) &&
-      !/(?:ajouter un commentaire|write a comment|commenter)/i.test(text);
+      !/(?:ajouter un commentaire|write a comment|commenter|escribe un comentario|comentar)/i.test(text);
   }
   function summaryGeometry(icon,post) {
     const ir=rect(icon), pr=rect(post);
@@ -1203,7 +1224,7 @@
   // pas devenir un ouvreur de réactions de la publication.
   function commentSectionTop(post) {
     const walker=document.createTreeWalker(post,NodeFilter.SHOW_TEXT);
-    const clues=/^(?:voir plus de commentaires|voir les commentaires|afficher davantage de commentaires|view more comments|view all comments|voir les .*commentaires|commenter en tant que|write a comment|comment as )/i;
+    const clues=/^(?:voir plus de commentaires|voir les commentaires|afficher davantage de commentaires|view more comments|view all comments|voir les .*commentaires|commenter en tant que|write a comment|comment as |ver m[aá]s comentarios|ver comentarios|ver todos los comentarios|comentar como|escribe un comentario)/i;
     let node, count=0, boundary=Infinity;
     while ((node=walker.nextNode()) && ++count<1600) {
       const label=clean(node.textContent);
@@ -1328,8 +1349,8 @@
   //   <span role="toolbar" aria-label="Voir qui a réagi">
   //     <div role="button" aria-label="Haha : 40 personnes"><img role="presentation"></div> …
   // Aucune position, aucun calibrage. Les barres des COMMENTAIRES (articles imbriqués) sont exclues.
-  const WHO_REACTED_TOOLBAR = /(?:voir qui a réagi|see who reacted|who reacted)/i;
-  const REACTION_COUNT_BUTTON = /^[^:]{1,40}\s?:\s?\d[\d\s\u00a0.,]*\s*[kKmM]?\s*(?:personnes?|people|person)\b/i;
+  const WHO_REACTED_TOOLBAR = /(?:voir qui a réagi|see who reacted|who reacted|qui[eé]n(?:es)? (?:ha(?:n)? )?reaccion)/i;
+  const REACTION_COUNT_BUTTON = /^[^:]{1,40}\s?:\s?\d[\d\s\u00a0.,]*\s*[kKmM]?\s*(?:personnes?|people|person|personas?)\b/i;
   function semanticOpeners(post) {
     const out=[];
     if (!post) return out;
@@ -1952,6 +1973,7 @@
         // La mémoire seenPosts empêche les doublons DANS cette session ;
         // l'historique persistent sert uniquement à compter les recontrôles.
         state.current = `Publication ${state.posts+state.inaccessible+state.pollsSkipped+state.failures+1}`;
+        lastClickInfo = null;   // 2.26.0 : le dernier clic d'une publication précédente ne doit pas figurer dans le rapport de celle-ci
         if (stable && historyPosts.has(stable)) {
           state.skipped++;
           scrollsSinceOpen=0;

@@ -13,6 +13,7 @@
       <div class="headerText"><span class="eyebrow">TQIDr Labs <span class="eyebrowDot" aria-hidden="true">·</span> Extension Chrome</span>
         <h1>Invitations réactions</h1>
         <p>Extension locale <span aria-hidden="true">·</span> v<span id="appVersion">…</span></p></div>
+      <div class="langSwitch" role="group" aria-label="Langue / Language / Idioma"><button type="button" id="langFr" aria-pressed="true" title="Français" aria-label="Français"><svg viewBox="0 0 30 20" aria-hidden="true"><rect width="10" height="20" fill="#0055a4"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ef4135"/></svg></button><button type="button" id="langEn" aria-pressed="false" title="English" aria-label="English"><svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#012169"/><path d="M0 0L30 20M30 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0L30 20M30 0L0 20" stroke="#c8102e" stroke-width="1.6"/><path d="M15 0V20M0 10H30" stroke="#fff" stroke-width="6"/><path d="M15 0V20M0 10H30" stroke="#c8102e" stroke-width="3.4"/></svg></button><button type="button" id="langEs" aria-pressed="false" title="Español" aria-label="Español"><svg viewBox="0 0 30 20" aria-hidden="true"><rect width="30" height="20" fill="#aa151b"/><rect y="5" width="30" height="10" fill="#f1bf00"/></svg></button></div>
     </header>
     <section class="modegrid" aria-label="Modes d'utilisation">
       <div class="mode"><strong>Une publication</strong><p>Clique sur un emoji de réaction de la publication pour ouvrir la liste des personnes ayant réagi. L’extension sélectionne automatiquement « Toutes » si nécessaire, puis parcourt la liste et envoie les invitations disponibles.</p><button id="startManual" class="secondary action">Lancer les invitations</button></div>
@@ -67,6 +68,7 @@
     <div class="actions"><button id="pause" class="secondary" disabled>Pause</button><button id="stop" class="danger" disabled>Arrêter</button></div>
     <p class="footnote">Le bouton « Lancer les invitations sur la Page » repère automatiquement les réactions de chaque publication, sans calibrage. Chaque session réexamine les publications, y compris celles déjà traitées auparavant : de nouvelles réactions peuvent avoir été ajoutées. Le mode « Toute la Page » ne clique que sur le bouton « Inviter » d'une fenêtre de réactions reconnue. Les invitations réellement envoyées et les limites sont décidées par Facebook. La détection des publications dépend de son interface ; aucune visite de profil.</p>
   </main>
+  <script src="i18n.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

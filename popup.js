@@ -1,5 +1,25 @@
 'use strict';
 const $ = id => document.getElementById(id);
+const TQ = window.TQ_I18N;
+// Traduction FR/EN : affichage uniquement. L'observateur retraduit tout texte écrit dynamiquement.
+let tqBusy = false;
+const tqObserver = new MutationObserver(() => {
+  if (tqBusy) return; tqBusy = true;
+  try { TQ.translateTree(document); } finally { tqBusy = false; tqObserver.takeRecords(); }
+});
+function applyLang() {
+  tqBusy = true;
+  try { TQ.translateTree(document); } finally { tqBusy = false; tqObserver.takeRecords(); }
+  $('langFr').setAttribute('aria-pressed', String(TQ.lang === 'fr'));
+  $('langEn').setAttribute('aria-pressed', String(TQ.lang === 'en'));
+  $('langEs').setAttribute('aria-pressed', String(TQ.lang === 'es'));
+}
+async function chooseLang(l) { await TQ.save(l); showStatus(lastStatus); applyLang(); }
+$('langFr').addEventListener('click', () => chooseLang('fr'));
+$('langEn').addEventListener('click', () => chooseLang('en'));
+$('langEs').addEventListener('click', () => chooseLang('es'));
+tqObserver.observe(document.documentElement, {childList: true, subtree: true, characterData: true});
+TQ.load().then(applyLang);
 // Le numéro affiché provient du manifeste : aucune version écrite en dur.
 $('appVersion').textContent = chrome.runtime.getManifest().version;
 let activeTabId = null;
@@ -65,7 +85,7 @@ async function send(type,payload={}) {
   try { return await chrome.tabs.sendMessage(activeTabId,{type,...payload}); }
   catch(error) {
     if (!['PING','GET_STATUS','START'].includes(type)) throw error;
-    await chrome.scripting.executeScript({target:{tabId:activeTabId},files:['content.js']});
+    await chrome.scripting.executeScript({target:{tabId:activeTabId},files:['i18n.js','content.js']});
     return await chrome.tabs.sendMessage(activeTabId,{type,...payload});
   }
 }
@@ -94,7 +114,7 @@ async function start(mode) {
   try {
     const options=readOptions();
     if (mode === 'page') {
-      if (options.pageLimit === 0 && !window.confirm(`${DAILY_WARNING}\n\n« Aucune limite » retire uniquement le plafond de l'extension, pas les restrictions de Facebook. Souhaites-tu lancer ce parcours sans plafond ?`)) return;
+      if (options.pageLimit === 0 && !window.confirm(TQ.tr(`${DAILY_WARNING}\n\n« Aucune limite » retire uniquement le plafond de l'extension, pas les restrictions de Facebook. Souhaites-tu lancer ce parcours sans plafond ?`))) return;
     }
     const res=await send('START',{mode,options});
     if(res?.error) throw new Error(res.error);
@@ -126,7 +146,7 @@ $('startManual').addEventListener('click',()=>start('manual'));
 $('startPage').addEventListener('click',()=>start('page'));
 $('pause').addEventListener('click',async()=>{
   try {
-    if (lastStatus.canContinue && Number(lastStatus.limit) + Number(lastStatus.batchLimit) > CAUTION_THRESHOLD && !window.confirm(`${DAILY_WARNING}\n\nCette reprise porterait le plafond cumulé à ${(Number(lastStatus.limit) + Number(lastStatus.batchLimit)).toLocaleString('fr-FR')} invitations. Tu peux poursuivre à ta discrétion. Souhaites-tu continuer sans reprendre depuis le début ?`)) return;
+    if (lastStatus.canContinue && Number(lastStatus.limit) + Number(lastStatus.batchLimit) > CAUTION_THRESHOLD && !window.confirm(TQ.tr(`${DAILY_WARNING}\n\nCette reprise porterait le plafond cumulé à ${(Number(lastStatus.limit) + Number(lastStatus.batchLimit)).toLocaleString('fr-FR')} invitations. Tu peux poursuivre à ta discrétion. Souhaites-tu continuer sans reprendre depuis le début ?`))) return;
     const answer=await send(lastStatus.canContinue?'CONTINUE_LIMIT':lastStatus.phase==='paused'?'RESUME':'PAUSE');
     showStatus(answer);
     if (answer?.phase==='running') window.close(); // reprise : on laisse la page libre

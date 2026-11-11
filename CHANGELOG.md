@@ -1,5 +1,23 @@
 # Historique des modifications
 
+## 2.27.0 — 2026-11-11 — Espagnol, drapeaux de langue
+
+**Type de changement : langue (aucune règle de clic modifiée, seuls des libellés sont reconnus en plus).**
+
+- **Interface FR / EN / ES :** le sélecteur de langue en haut de la popup devient trois drapeaux (français, anglais, espagnol). Par défaut : la langue de Chrome (français, espagnol, sinon anglais).
+- **Facebook en espagnol :** reconnaissance de la fenêtre des réactions (« Consulta quién ha reaccionado a esto », « Ver … personas que han reaccionado »), de l'onglet « Todo », du bouton « Invitar », des états « Invitado(a) », « Siguiendo », « Cerrar ». Même règle de sécurité : aucun clic tant que la fenêtre n'est pas reconnue.
+- **Validé en conditions réelles sur Facebook en espagnol :** fenêtre des réactions reconnue, bouton « Invitar » cliqué, 8 invitations confirmées sur 8 clics.
+
+## 2.26.0 — 2026-11-11 — Interface française / anglaise, pause « zone perdue » diagnostiquée
+
+**Type de changement : interface et diagnostic (aucune règle de clic modifiée).**
+
+- **Interface FR / EN :** sélecteur FR | EN en haut de la popup. La langue par défaut suit celle de Chrome (français si Chrome est en français, anglais sinon). Le choix s'applique à la popup et au panneau flottant sur Facebook. Les textes non traduits restent en français, sans rien bloquer. La traduction ne concerne que l'affichage : le moteur de détection est inchangé.
+- **Validé en conditions réelles sur Facebook en anglais :** fenêtre des réactions reconnue, bouton « Invite » reconnu et cliqué, invitations confirmées (6 sur 6).
+- **Pause « Zone de défilement des réactions perdue » :** l'extension attend désormais jusqu'à 4 secondes que Facebook remette la zone de défilement en place avant de se mettre en pause, et si la liste est entièrement visible (toutes les personnes annoncées ont été vues), elle conclut au lieu de s'arrêter. Dans tous les cas, un événement anonyme `scroll_lost` est ajouté au diagnostic pour comprendre ce qui se passe.
+- **Rapport de diagnostic :** le champ `last_click` ne reprend plus le dernier clic d'une publication précédente.
+- Conseil de prudence aligné sur 100 invitations par jour dans toute l'interface (popup, panneau, confirmations).
+
 ## 2.25.0 — 2026-11-11 — Sans mémorisation, diagnostic à toute épreuve, notice
 
 **Type de changement : confidentialité, support, documentation (aucune règle de clic modifiée).**
