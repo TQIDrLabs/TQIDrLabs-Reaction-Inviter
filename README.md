@@ -26,7 +26,7 @@ Extension Chrome qui invite, depuis une Page Facebook que vous administrez, les 
 
 ## Installation (mode développeur)
 
-1. Téléchargez ce dépôt (**Code → Download ZIP**) et décompressez-le.
+1. Téléchargez le zip de la dernière version dans l'onglet **Releases** (colonne de droite) et décompressez-le.
 2. Ouvrez `chrome://extensions`, activez le **mode développeur**.
 3. **Charger l'extension non empaquetée**, puis choisissez le dossier qui contient `manifest.json`.
 4. Ouvrez votre Page Facebook (en français), cliquez sur l'icône de l'extension, lancez.
