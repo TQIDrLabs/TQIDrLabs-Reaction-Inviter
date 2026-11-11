@@ -6,6 +6,11 @@ Extension Chrome qui invite, depuis une Page Facebook que vous administrez, les 
 
 *English: a Chrome extension that goes through your Facebook Page's posts and sends the "Invite" button to each person who reacted. Interface and messages are in French; diagnostics work in French and English labels.*
 
+<p align="center">
+  <img src="popup.png" width="420" alt="Popup de l'extension">
+  <img src="panneau.png" width="300" alt="Panneau de suivi sur la page Facebook">
+</p>
+
 > **Projet indépendant.** Cette extension n'est ni affiliée, ni approuvée, ni parrainée par Meta ou Facebook. « Facebook » est une marque de Meta Platforms, Inc., citée ici uniquement pour décrire la fonction.
 
 ## Avertissement important
